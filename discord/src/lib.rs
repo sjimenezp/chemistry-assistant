@@ -21,8 +21,8 @@ pub async fn on_deploy() {
 async fn handler(msg: Message) {
     logger::init();
     let token = env::var("discord_token").unwrap();
-    let placeholder_text = env::var("placeholder").unwrap_or("Escribiendo ...".to_string());
-    let system_prompt = env::var("system_prompt").unwrap_or("Eres un asistente personal para el personal de SIGSA.".to_string());
+    let placeholder_text = env::var("placeholder").unwrap_or("Typing ...".to_string());
+    let system_prompt = env::var("system_prompt").unwrap_or("You are a helpful chemistry teacher. Explain in simple English and adhere strictly to facts.".to_string());
     let llm_endpoint = std::env::var("llm_endpoint").unwrap_or("".to_string());
 
     let bot = ProvidedBot::new(token);
@@ -38,7 +38,7 @@ async fn handler(msg: Message) {
         _ = discord.send_message(
             channel_id.into(),
             &serde_json::json!({
-                "content": "Ok, Iniciaré una nueva conversación."
+                "content": "Ok, I am starting a new conversation."
             }),
         ).await;
         store::set(&channel_id.to_string(), json!(true), None);
@@ -48,7 +48,7 @@ async fn handler(msg: Message) {
         _ = discord.send_message(
             channel_id.into(),
             &serde_json::json!({
-                "content": "Disculpa, No reconozco el comando. Quisiste escribir /restart para comenzar una nueva conversación?"
+                "content": "Sorry, I do not recognize this command. Do you mean to say /restart to start a new conversation?"
             }),
         ).await;
         return;
@@ -90,7 +90,7 @@ async fn handler(msg: Message) {
             _ = discord.edit_message(
                 channel_id.into(), placeholder.id.into(),
                 &serde_json::json!({
-                    "content": "Disculpa, ocurrió un problema. Intenta nuevamente!"
+                    "content": "Sorry, an error has occured. Please try again later!"
                 }),
             ).await;
             log::error!("OpenAI returns error: {}", e);
